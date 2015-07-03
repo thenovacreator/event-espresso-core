@@ -478,6 +478,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 					}else{
 						$value = '';
 					}
+					//microsoft excel tries to display phone numbers as floats. yuck.
+					//this forces excel to treat it as text
+					if( $att_field_name == 'ATT_phone' ) {
+						$value = '"' . $value . '"';
+					}
 
 					$reg_csv_array[$this->_get_column_name_for_field($field_obj)] = $value;
 				}
