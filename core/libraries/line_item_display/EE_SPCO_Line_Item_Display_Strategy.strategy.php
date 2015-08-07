@@ -133,8 +133,21 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 
 			case EEM_Line_Item::type_line_item:
 				$options[ 'billable_qty' ] = $this->_is_billable( $line_item );
-				if ( $options[ 'billable_qty' ] ) {
+				if ( ( $line_item->OBJ_type() == 'Ticket' && $options[ 'billable_qty' ] ) ) {
 					// item row
+					$html .= $this->_item_row( $line_item, $options );
+					// got any kids?
+					foreach ( $line_item->children() as $child_line_item ) {
+						$this->display_line_item( $child_line_item, $options );
+					}
+				} else {
+					$options[ 'billable_qty' ] = $line_item->quantity();
+					$total = $line_item->quantity() * $line_item->unit_price();
+					$this->_billable_total += $total;
+					if ( $line_item->is_taxable() ) {
+						$this->_billable_tax_total += $total;
+					}
+					// non-ticket item row
 					$html .= $this->_item_row( $line_item, $options );
 					// got any kids?
 					foreach ( $line_item->children() as $child_line_item ) {
@@ -156,8 +169,6 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 					// recursively feed children back into this method
 					$html .= $this->display_line_item( $child_line_item, $options );
 				}
-				//EEH_Debug_Tools::printr( $line_item->total(), '$line_item->total()', __FILE__, __LINE__ );
-				//EEH_Debug_Tools::printr( $sub_total, '$sub_total', __FILE__, __LINE__ );
 				if ( $line_item->total() != $sub_total && count( $child_line_items ) > 1 ) {
 					$html .= $this->_sub_total_row( $line_item, __('Sub-Total', 'event_espresso'), $options );
 				}
