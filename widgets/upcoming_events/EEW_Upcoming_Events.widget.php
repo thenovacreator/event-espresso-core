@@ -345,7 +345,11 @@ class EEW_Upcoming_Events  extends WP_Widget {
 								default :
 									$len_class =  ' one-line';
 							}
-							echo '<h5 class="ee-upcoming-events-widget-title-h5"><a class="ee-widget-event-name-a' . $len_class . '" href="' . get_permalink( $event->ID() ) . '">' . $event->name() . '</a></h5>';
+
+							// Get the url for the event
+							$event_link = EEH_Event_View::event_link_url( $event->ID() );
+
+							echo '<h5 class="ee-upcoming-events-widget-title-h5"><a class="ee-widget-event-name-a' . $len_class . '" href="' . $event_link . '">' . $event->name() . '</a></h5>';
 							if ( has_post_thumbnail( $event->ID() ) && $image_size != 'none' ) {
 								echo '<div class="ee-upcoming-events-widget-img-dv"><a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a></div>';
 							}
