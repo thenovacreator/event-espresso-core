@@ -203,7 +203,10 @@ class EEM_Transaction extends EEM_Base {
 	/**
 	 * Deletes "junk" transactions that were probably added by bots. There might be TONS
 	 * of these, so we are very careful to NOT select (which the models do even when deleting),
-	 * and so we only use wpdb directly and NOT do any joins.
+	 * and so we only use wpdb directly and do minimal joins.
+         * Transactions are considered "junk" if they're failed for longer than a week.
+         * Also there is an extra check for payments; because if a transaction has a payment
+         * on it, it's probably not junk (regardless of what status it has).
 	 * The downside to this approach is that is addons are listening for object deletions
 	 * on EEM_Base::delete() they won't be notified of this.
 	 * @global WPDB $wpdb
@@ -216,11 +219,13 @@ class EEM_Transaction extends EEM_Base {
 			'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone', WEEK_IN_SECONDS
 		);
 		$query = $wpdb->prepare( '
-			DELETE
-			FROM '. $this->table() . '
+			DELETE t
+			FROM '. $this->table() . ' AS t LEFT JOIN
+                            ' . EEM_Payment::instance()->table() . ' AS p ON t.TXN_ID = p.TXN_ID
 			WHERE
-				STS_ID = %s AND
-				TXN_timestamp < %s',
+				t.STS_ID = %s AND
+				t.TXN_timestamp < %s AND
+                                p.PAY_ID IS NULL',
 			EEM_Transaction::failed_status_code,
 			// use GMT time because that's what TXN_timestamps are in
 			gmdate(  'Y-m-d H:i:s', time() - $time_to_leave_alone )

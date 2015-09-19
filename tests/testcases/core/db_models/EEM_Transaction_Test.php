@@ -97,6 +97,8 @@ class EEM_Transaction_Test extends EE_UnitTestCase {
 		$this->factory->transaction->create_many( $pretend_bot_creations, array( 'TXN_timestamp' => time() - WEEK_IN_SECONDS * 2 , 'STS_ID' => EEM_Transaction::failed_status_code ) );
 		$this->factory->transaction->create_many( $pretend_real_recent_txns, array( 'TXN_timestamp' => time() - EE_Registry::instance()->SSN->lifespan() + MINUTE_IN_SECONDS , 'STS_ID' => EEM_Transaction::failed_status_code ) );
 		$this->factory->transaction->create_many( $pretend_real_good_txns, array( 'STS_ID' => EEM_Transaction::abandoned_status_code ) );
+                $failed_transaction_with_real_payment = $this->new_model_obj_with_dependencies( 'Transaction', array( 'TXN_timestamp' => time() - WEEK_IN_SECONDS * 2, 'STS_ID' => EEM_Transaction::failed_status_code ) );
+                $real_payment = $this->new_model_obj_with_dependencies( 'Payment', array( 'TXN_ID' => $failed_transaction_with_real_payment->ID() ) );
 		$num_deleted = EEM_Transaction::instance()->delete_junk_transactions();
 		$this->assertEquals( $pretend_bot_creations, $num_deleted );
 	}
