@@ -53,7 +53,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 */
 	protected static $_incompatible_addons = array(
 			'Promotions' => '1.0.0.rc.084',
-			'REST_API' => '3.1.0.beta.000',
+			'REST_API' => '3.0.1.beta.000',
 		);
 
 
