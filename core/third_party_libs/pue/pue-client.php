@@ -260,7 +260,7 @@ class PluginUpdateEngineChecker {
 				case 'slug_not_array' :
 					//Old method for plugin name is just to use the slug and manipulate
 					$pluginname = ucwords(str_replace('-', ' ', $this->_incoming_slug) );
-					$msg .= sprintf( __('The following plugin needs to be updated in order to work with this version of our plugin update script: <strong>%s</strong></p><p>You will have to update this manually.  Contact support for further instructions', $this->lang_domain), $pluginname);
+					$msg .= sprintf( __('The following plugin needs to be updated in order to work with this version of our plugin update script: <strong>%s</strong> You will have to update this manually.  Contact support for further instructions', $this->lang_domain), $pluginname);
 					break;
 			}
 		} else {

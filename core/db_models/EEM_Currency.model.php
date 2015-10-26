@@ -37,7 +37,7 @@ class EEM_Currency extends EEM_Base{
 		);
 		$this->_fields = array(
 			'Currency'=>array(
-				'CUR_code'=> new EE_Primary_Key_String_Field('CUR_code', __('Currency COde','event_espresso')),
+				'CUR_code'=> new EE_Primary_Key_String_Field('CUR_code', __('Currency Code','event_espresso')),
 				'CUR_single' => new EE_Plain_Text_Field('CUR_single', __('Currency Name Singular','event_espresso'), false),
 				'CUR_plural' => new EE_Plain_Text_Field('CUR_plural', __('Currency Name Plural','event_espresso'), false),
 				'CUR_sign' => new EE_Plain_Text_Field('CUR_sign', __('Currency Sign','event_espresso'), false),

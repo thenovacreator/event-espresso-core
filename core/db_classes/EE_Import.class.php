@@ -325,11 +325,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		}
 
 		if ( $this->_total_update_errors > 0 ) {
-			EE_Error::add_error(sprintf(__("'One or more errors occurred, and a total of %s existing records in the database were <strong>not</strong> updated.'", "event_espresso"),$this->_total_update_errors), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(sprintf(__("One or more errors occurred, and a total of %s existing records in the database were <strong>not</strong> updated.", "event_espresso"),$this->_total_update_errors), __FILE__, __FUNCTION__, __LINE__ );
 			$error = true;
 		}
 		if ( $this->_total_insert_errors > 0 ) {
-			EE_Error::add_error(sprintf(__("One or more errors occurred, and a total of %s new records were <strong>not</strong> added to the database.'", "event_espresso"),$this->_total_insert_errors), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(sprintf(__("One or more errors occurred, and a total of %s new records were <strong>not</strong> added to the database.", "event_espresso"),$this->_total_insert_errors), __FILE__, __FUNCTION__, __LINE__ );
 			$error = true;
 		}
 
