@@ -22,7 +22,12 @@ class EE_Single_Registration_Line_Item_Filter extends EE_Specific_Registrations_
 	 * @param EE_Registration $registration
 	 */
 	public function __construct( $registration ) {
-		parent::__construct( array( $registration ) );
+		if( $registration instanceof EE_Registration ) {
+			$registrations = array( $registration );
+		} else { 
+			$registrations = array();
+		}
+		parent::__construct( $registrations );
 	}
 }
 // End of file EE_Single_Registration_Line_Item_Filter.class.php

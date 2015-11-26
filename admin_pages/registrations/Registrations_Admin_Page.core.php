@@ -1409,8 +1409,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_session = $transaction->session_data();
 
 		$filters = new EE_Line_Item_Filter_Collection();
-		$filters->add( new EE_Single_Registration_Line_Item_Filter( $this->_registration ) );
+		$filters->add( new EE_Specific_Tickets_Line_Item_Filter( array( $this->_registration->ticket() ) ) );
 		$filters->add( new EE_Non_Zero_Line_Item_Filter() );
+		$filters->add( new EE_Single_Registration_Line_Item_Filter( $this->_registration->is_cancelled() ? null : $this->_registration ) );
+		
 		$line_item_filter_processor = new EE_Line_Item_Filter_Processor( $filters, $transaction->total_line_item() );
 		$filtered_line_item_tree = $line_item_filter_processor->process();
 
