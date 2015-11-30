@@ -52,7 +52,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			$tax_total = 0;
 			//partial payment, so just add 1 item
 			$items[] = array(
-				'name'=>  sprintf(__("Partial payment for registration %s", 'event_espresso'),$primary_registrant->reg_code()),
+				'name'=>  sprintf(__("Payment of %s for %s", 'event_espresso'),$payment->amount(),$primary_registrant->event_name()),
 				'price'=> $this->format_currency($payment->amount()),
 				'sku'=>$primary_registrant->reg_code(),
 				'quantity'=>1

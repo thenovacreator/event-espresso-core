@@ -128,7 +128,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			}
 		}else{
 			//this is a partial payment, so we can't really show all the line items
-			$redirect_args['item_name_' . $item_num] = substr( sprintf(__('Payment of %1$s for  %2$s', "event_espresso"),$payment->amount(), $primary_registrant->reg_code()), 0, 127 );
+			$redirect_args['item_name_' . $item_num] = substr( sprintf(__('Payment of %1$s for  %2$s', "event_espresso"),$payment->amount(), $primary_registrant->event_name()), 0, 127 );
 			$redirect_args['amount_' . $item_num] = $payment->amount();
 			//if we aren't allowing PayPal to calculate shipping, set it to 0
 			$redirect_args['shipping_' . $item_num ] = '0';
