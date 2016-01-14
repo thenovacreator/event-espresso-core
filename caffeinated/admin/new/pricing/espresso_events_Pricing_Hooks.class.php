@@ -204,16 +204,23 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$saved_dtt_objs = array();
 
 		foreach ( $data['edit_event_datetimes'] as $row => $dtt ) {
+			//trim all values to ensure any excess whitespace is removed.
+			$dtt = array_map(
+				function( $datetime_data ) {
+					return is_array( $datetime_data ) ? $datetime_data : trim( $datetime_data );
+				},
+				$dtt
+			);
 			$dtt['DTT_EVT_end'] = isset($dtt['DTT_EVT_end']) && ! empty( $dtt['DTT_EVT_end'] ) ? $dtt['DTT_EVT_end'] : $dtt['DTT_EVT_start'];
 			$datetime_values = array(
-				'DTT_ID' => !empty( $dtt['DTT_ID'] ) ? $dtt['DTT_ID'] : NULL,
-				'DTT_name' => !empty( $dtt['DTT_name'] ) ? $dtt['DTT_name'] : '',
-				'DTT_description' => !empty( $dtt['DTT_description'] ) ? $dtt['DTT_description'] : '',
-				'DTT_EVT_start' => $dtt['DTT_EVT_start'],
-				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
-				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? INF : $dtt['DTT_reg_limit'],
-				'DTT_order' => !isset( $dtt['DTT_order'] ) ? $row : $dtt['DTT_order'],
-				);
+				'DTT_ID' 			=> ! empty( $dtt['DTT_ID'] ) ? $dtt['DTT_ID'] : NULL,
+				'DTT_name' 			=> ! empty( $dtt['DTT_name'] ) ? $dtt['DTT_name'] : '',
+				'DTT_description' 	=> ! empty( $dtt['DTT_description'] ) ? $dtt['DTT_description'] : '',
+				'DTT_EVT_start' 	=> $dtt['DTT_EVT_start'],
+				'DTT_EVT_end' 		=> $dtt['DTT_EVT_end'],
+				'DTT_reg_limit' 	=> empty( $dtt['DTT_reg_limit'] ) ? EE_INF : $dtt[ 'DTT_reg_limit' ],
+				'DTT_order' 		=> ! isset( $dtt['DTT_order'] ) ? $row : $dtt['DTT_order'],
+			);
 
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
 
@@ -320,7 +327,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
 
-			$update_prices = $create_new_TKT = $ticket_sold = FALSE;
+			$update_prices = $create_new_TKT = FALSE;
 
 			//figure out what dtts were added to the ticket and what dtts were removed from the ticket in the session.
 
@@ -328,6 +335,15 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$tkt_dtt_rows = explode(',', $data['ticket_datetime_rows'][$row] );
 			$dtts_added = array_diff($tkt_dtt_rows, $starting_tkt_dtt_rows);
 			$dtts_removed = array_diff($starting_tkt_dtt_rows, $tkt_dtt_rows);
+
+			// trim inputs to ensure any excess whitespace is removed.
+			$tkt = array_map(
+				function( $ticket_data ) {
+					return is_array( $ticket_data ) ? $ticket_data : trim( $ticket_data );
+				},
+				$tkt
+			);
+
 			//note we are doing conversions to floats here instead of allowing EE_Money_Field to handle because we're doing calcs prior to using the models.
 			//note incoming ['TKT_price'] value is already in standard notation (via js).
 			$ticket_price = isset( $tkt['TKT_price'] ) ?  round ( (float) $tkt['TKT_price'], 3 ) : 0;
@@ -356,21 +372,21 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			}
 
 			$TKT_values = array(
-				'TKT_ID' => !empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
-				'TTM_ID' => !empty( $tkt['TTM_ID'] ) ? $tkt['TTM_ID'] : 0,
-				'TKT_name' => !empty( $tkt['TKT_name'] ) ? $tkt['TKT_name'] : '',
-				'TKT_description' => !empty( $tkt['TKT_description'] ) && $tkt['TKT_description'] != __('You can modify this description', 'event_espresso') ? $tkt['TKT_description'] : '',
-				'TKT_start_date' => $tkt['TKT_start_date'],
-				'TKT_end_date' => $tkt['TKT_end_date'],
-				'TKT_qty' => ! isset( $tkt[ 'TKT_qty' ] ) || $tkt[ 'TKT_qty' ] === '' ? INF : $tkt['TKT_qty'],
-				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? INF : $tkt['TKT_uses'],
-				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
-				'TKT_max' => empty( $tkt['TKT_max'] ) ? INF : $tkt['TKT_max'],
-				'TKT_row' => $row,
-				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
-				'TKT_taxable' => !empty( $tkt['TKT_taxable'] ) ? 1 : 0,
-				'TKT_required' => !empty( $tkt['TKT_required'] ) ? 1 : 0,
-				'TKT_price' => $ticket_price
+				'TKT_ID' 			=> ! empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
+				'TTM_ID' 			=> ! empty( $tkt['TTM_ID'] ) ? $tkt['TTM_ID'] : 0,
+				'TKT_name' 			=> ! empty( $tkt['TKT_name'] ) ? $tkt['TKT_name'] : '',
+				'TKT_description' 	=> ! empty( $tkt['TKT_description'] ) && $tkt['TKT_description'] != __('You can modify this description', 'event_espresso') ? $tkt['TKT_description'] : '',
+				'TKT_start_date' 	=> $tkt['TKT_start_date'],
+				'TKT_end_date' 		=> $tkt['TKT_end_date'],
+				'TKT_qty' 			=> ! isset( $tkt[ 'TKT_qty' ] ) || $tkt[ 'TKT_qty' ] === '' ? EE_INF : $tkt[ 'TKT_qty' ],
+				'TKT_uses' 			=> ! isset( $tkt[ 'TKT_uses' ] ) || $tkt[ 'TKT_uses' ] === '' ? EE_INF : $tkt['TKT_uses'],
+				'TKT_min' 			=> empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
+				'TKT_max' 			=> empty( $tkt['TKT_max'] ) ? EE_INF : $tkt['TKT_max'],
+				'TKT_row' 			=> $row,
+				'TKT_order' 		=> isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
+				'TKT_taxable' 		=> ! empty( $tkt['TKT_taxable'] ) ? 1 : 0,
+				'TKT_required' 		=> ! empty( $tkt['TKT_required'] ) ? 1 : 0,
+				'TKT_price' 		=> $ticket_price
 			);
 
 
@@ -392,8 +408,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				if ( $TKT instanceof EE_Ticket ) {
 
 					$TKT = $this->_update_ticket_datetimes( $TKT, $saved_dtts, $dtts_added, $dtts_removed );
+					// are there any registrations using this ticket ?
+					$tickets_sold = $TKT->count_related(
+						'Registration',
+						array( array(
+								'STS_ID' => array( 'NOT IN', array( EEM_Registration::status_id_incomplete ) )
+						) )
+					);
 					//set ticket formats
-					$ticket_sold = $TKT->count_related('Registration', array( array( 'STS_ID' => array( 'NOT IN', array( EEM_Registration::status_id_incomplete ) ) ) ) ) > 0 ? true : false;
 					$TKT->set_date_format( $this->_date_format_strings['date'] );
 					$TKT->set_time_format( $this->_date_format_strings['time'] );
 
@@ -401,8 +423,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					// and determine if it matches the new total price.
 					// if they are different then we create a new ticket (if tkts sold)
 					// if they aren't different then we go ahead and modify existing ticket.
-					$orig_price = $TKT->price();
-					$create_new_TKT = $ticket_sold && $ticket_price != $orig_price && ! $TKT->get('TKT_deleted')
+					$create_new_TKT = $tickets_sold > 0 && $ticket_price != $TKT->price() && ! $TKT->deleted()
 							? TRUE : FALSE;
 
 					//set new values
@@ -631,6 +652,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$new_ticket->set( 'TKT_deleted', 0 );
 		$new_ticket->set( 'TKT_price', $ticket_price );
 		$new_ticket->set( 'TKT_sold', 0 );
+		// let's get a new ID for this ticket
+		$new_ticket->save();
 		// we also need to make sure this new ticket gets the same datetime attachments as the archived ticket
 		$datetimes_on_existing = $ticket->get_many_related( 'Datetime' );
 		$new_ticket = $this->_update_ticket_datetimes(
@@ -818,13 +841,25 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			// datetime on the event.
 			if ( empty ( $related_tickets ) && count( $times ) < 2 ) {
 				$related_tickets = EE_Registry::instance()->load_model('Ticket')->get_all_default_tickets();
+
+				//this should be ordered by TKT_ID, so let's grab the first default ticket (which will be the main default) and ensure it has any default prices added to it (but do NOT save).
+				$default_prices = EEM_Price::instance()->get_all_default_prices();
+
+				$main_default_ticket = reset( $related_tickets );
+				if ( $main_default_ticket instanceof EE_Ticket ) {
+					foreach ( $default_prices as $default_price ) {
+						if ( $default_price->is_base_price() ) {
+							continue;
+						}
+						$main_default_ticket->cache( 'Price', $default_price );
+					}
+				}
 			}
 
 
 			//we can't actually setup rows in this loop yet cause we don't know all the unique tickets for this event yet (tickets are linked through all datetimes). So we're going to temporarily cache some of that information.
 
 			//loop through and setup the ticket rows and make sure the order is set.
-			$order = 0;
 			foreach ( $related_tickets as $ticket ) {
 				$tktid = $ticket->get('TKT_ID');
 				$tktrow = $ticket->get('TKT_row');
@@ -1011,8 +1046,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		//if $ticket is not an instance of EE_Ticket then force default to true.
 		$default =  ! $ticket instanceof EE_Ticket ? true : false;
 
+		$prices = ! empty( $ticket ) && ! $default ? $ticket->get_many_related('Price', array('default_where_conditions' => 'none', 'order_by' => array('PRC_order' => 'ASC') ) ) : array();
 
-		$prices = !empty($ticket) && !$default ? $ticket->get_many_related('Price', array('default_where_conditions' => 'none', 'order_by' => array('PRC_order' => 'ASC') ) ) : array();
+		//if there is only one price (which would be the base price) or NO prices and this ticket is a default ticket, let's just make sure there are no cached default prices on
+		//the object.  This is done by not including any query_params.
+		if ( $ticket instanceof EE_Ticket && $ticket->is_default() && ( count( $prices ) === 1  || empty( $prices ) ) ) {
+			$prices = $ticket->get_many_related( 'Price' );
+		}
 
 		// check if we're dealing with a default ticket in which case we don't want any starting_ticket_datetime_row values set (otherwise there won't be any new relationships created for tickets based off of the default ticket).  This will future proof in case there is ever any behaviour change between what the primary_key defaults to.
 		$default_dtt = $default || ($ticket instanceof EE_Ticket && $ticket->get('TKT_is_default') ) ? TRUE : FALSE;
